@@ -1,11 +1,11 @@
 import pytest
 
-xfail = pytest.mark.xfail("my_downstream_thing")
+notimpl = pytest.mark.xfail(reason="not implemented in backend")
+notyet = pytest.mark.xfail(reason="not implemented upstream")
 
 xfail_params = {
-    "test_a.py::test_param_needs_mark[third]": pytest.param(
-        "False, 0", id="third", marks=pytest.mark.xfail("nope")
-    )
+    "test_a.py::test_param_needs_mark[third]": notimpl,
+    "test_a.py::test_param_needs_mark[4]": notyet,
 }
 
 from upstream.a_upstream import *

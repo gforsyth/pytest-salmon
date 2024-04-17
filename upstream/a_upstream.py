@@ -22,6 +22,7 @@ def test_that_fails_downstream():
         param(True, 1, id="first"),
         param(True, 2, id="second"),
         param(False, 0, id="third"),
+        param(False, 0, id="4"),
     ],
 )
 def test_param_needs_mark(mybool, someint):
