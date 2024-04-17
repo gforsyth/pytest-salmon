@@ -17,20 +17,3 @@ nodeid : `pytest.Param(param, values, id="same_as_upstream", marks=theseus_marke
 
 then we mutate the tests on collection and for a given nodeid, if there's a param with a matching id, we replace it.
 
-
-```python 
-c = items[-1]
-myparam = pytest.param("False, 0", id="third", marks=pytest.mark.xfail('theseus'))
-
-myparams = []
-for p in c.own_markers[0].args[1]:  # this is brittle
-    if p.id != myparam.id:
-        myparams.append(p)
-    else:
-        myparams.append(myparam)
-
-mymark = pytest.Mark(name=mark.name, kwargs=mark.kwargs, args=(mark.args[0], myparams))
-
-c.own_markers = [mymark]
-```
-
