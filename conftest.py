@@ -1,8 +1,3 @@
-import re
-
-TEST_NAME_IDS = re.compile(r"(.*)\[(?:(.*)-)*(.*)\]")
-
-
 def pytest_collection_modifyitems(items):
     # scan across all test modules and update xfails dictionary with any entires
     # found in those modules
@@ -30,20 +25,12 @@ def pytest_collection_modifyitems(items):
             # So for the test `test_corr_cov[no_cond-covar_pop]`, we may have specified
             # `test_corr_cov[covar_pop]` as a failure case. So we split out the 1+
             # parameter names and check them all in sequence
-            for single_node_id in _unnest_node_ids(item.name):
-                if (patch_marker := xfails.get(single_node_id)) is not None:
-                    item.add_marker(patch_marker)
-
-
-def _unnest_node_ids(itemname: str) -> list[str]:
-    match = re.match(TEST_NAME_IDS, itemname)
-    if match is None:
-        yield itemname
-    else:
-        test_name, *ids = match.groups()
-
-        for _id in filter(None, ids):
-            yield f"{test_name}[{_id}]"
+            if hasattr(item, "callspec"):
+                # if there's no callspec then this is likely an invalid branch
+                for single_id in item.callspec._idlist:
+                    single_node_id = f"{item.originalname}[{single_id}]"
+                    if (patch_marker := xfails.get(single_node_id)) is not None:
+                        item.add_marker(patch_marker)
 
 
 # TODO: track which imported xfails have been used
